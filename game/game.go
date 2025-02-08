@@ -12,11 +12,14 @@ type Game struct {
 	Player           *Player
 	Camera           Camera
 	CurrentLevelName string
+	Em               EnemyManager
 }
 
 func InitGame() Game {
 	g := Game{}
 	g.Rm = InitResourceManager()
+	g.Em = InitEnemyManager()
+  g.Em.SpawnEnemy("", rl.Vector2{X: 300, Y: 300})
 	g.Player = InitPlayer()
 	g.Camera = InitCamera(g.Player)
 	g.Maps = InitMaps()
@@ -26,11 +29,25 @@ func InitGame() Game {
 
 func (g *Game) Update() {
 	g.Player.Move()
+	g.PlayerCollisions()
 	g.Camera.MoveTo(g.Player)
+}
+
+func (g *Game) PlayerCollisions() {
+  g.Player.CollisionBox.X = g.Player.Pos.X
+  g.Player.CollisionBox.Y = g.Player.Pos.Y
+	for _, e := range g.Em.Enemies {
+      fmt.Println("enemy x:", e.CollisionBox.X,"; y: ",e.CollisionBox.Y)
+      fmt.Println("enemy x: ",g.Player.CollisionBox.X,"; y: ",g.Player.CollisionBox.Y)
+		if rl.CheckCollisionRecs(e.CollisionBox, g.Player.CollisionBox) {
+			g.Player.Pos = g.Player.LastPos
+		}
+	}
 }
 
 func (g *Game) DrawWithCamera() {
 	g.Player.Draw()
+	g.Em.DrawEnemies()
 	g.DrawActiveTileset()
 }
 
@@ -50,7 +67,6 @@ func (g *Game) DrawTilemap(levelName string) {
 				tileID := layer.Tiles[x+y*int(tm.Map.Width)].ID
 
 				if tileID != 0 { // 0 means no tile
-
 					tileWidth := int(tm.Map.Tilesets[0].TileWidth)
 					tileHeight := int(tm.Map.Tilesets[0].TileHeight)
 

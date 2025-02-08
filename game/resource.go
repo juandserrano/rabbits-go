@@ -10,22 +10,12 @@ type ResourceManager struct {
 	Textures map[string]rl.Texture2D
 }
 
-// var rm *ResourceManager
-
 func InitResourceManager() ResourceManager {
-	// if rm != nil {
-	// 	rl.TraceLog(rl.LogWarning, "ResourceManager already initialized")
-	// 	return nil
-	// }
 	rm := ResourceManager{
 		Textures: map[string]rl.Texture2D{},
 	}
 	return rm
 }
-
-// func GetResourceManager() *ResourceManager {
-// 	return rm
-// }
 
 func (g *Game) LoadTexture(filepath, name string) error {
 	img := rl.LoadImage(filepath)

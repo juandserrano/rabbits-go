@@ -10,10 +10,6 @@ func main() {
 	defer rl.CloseWindow()
 	g := game.InitGame()
 
-	// tm := g.Maps["Level_0"].Map
-	// tsTexture := rl.LoadTexture(tm.Tilesets[0].Image.Source)
-	// defer rl.UnloadTexture(tsTexture)
-
 	rl.SetTargetFPS(120)
 	for !rl.WindowShouldClose() {
 		g.Update()

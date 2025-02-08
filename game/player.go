@@ -13,10 +13,10 @@ type Player struct {
 	CollisionBox rl.Rectangle
 }
 
-var p Player
+// var p Player
 
 func InitPlayer() *Player {
-	p = Player{
+  p := Player{
 		Pos:   rl.Vector2{X: PLAYER_START_POS_X, Y: PLAYER_START_POS_Y},
 		Speed: PLAYER_START_SPEED,
 	}
@@ -27,7 +27,6 @@ func InitPlayer() *Player {
 
 func (p *Player) Move() {
 	p.handleInput()
-	p.LastPos = p.Pos
 	p.selectTexture()
 }
 
@@ -44,6 +43,7 @@ func (p *Player) selectTexture() {
 }
 
 func (p *Player) handleInput() {
+  p.LastPos = p.Pos
 	p.Dir = rl.Vector2{X: 0, Y: 0}
 	if rl.IsKeyDown(rl.KeyRight) {
 		p.Dir.X += 1
@@ -60,6 +60,7 @@ func (p *Player) handleInput() {
 	p.Dir = rl.Vector2Normalize(p.Dir)
 	p.Pos.X += p.Speed * p.Dir.X * rl.GetFrameTime()
 	p.Pos.Y += p.Speed * p.Dir.Y * rl.GetFrameTime()
+
 }
 
 func (p *Player) LoadTextures() {
