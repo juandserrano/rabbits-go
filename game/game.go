@@ -17,9 +17,9 @@ type Game struct {
 
 func InitGame() Game {
 	g := Game{}
-	g.Rm = InitResourceManager()
-	g.Em = InitEnemyManager()
-  g.Em.SpawnEnemy("", rl.Vector2{X: 300, Y: 300})
+	g.Rm = InitResourceManager(&g)
+	g.Em = InitEnemyManager(&g)
+	g.Em.SpawnEnemy("fox", rl.Vector2{X: 300, Y: 300})
 	g.Player = InitPlayer()
 	g.Camera = InitCamera(g.Player)
 	g.Maps = InitMaps()
@@ -29,39 +29,52 @@ func InitGame() Game {
 
 func (g *Game) Update() {
 	g.Player.Move()
+  g.Em.MoveEnemy()
+  g.UpdateCollisionBoxes()
 	g.PlayerCollisions()
 	g.Camera.MoveTo(g.Player)
 }
 
 func (g *Game) PlayerCollisions() {
-  g.Player.CollisionBox.X = g.Player.Pos.X
-  g.Player.CollisionBox.Y = g.Player.Pos.Y
 	for _, e := range g.Em.Enemies {
-      fmt.Println("enemy x:", e.CollisionBox.X,"; y: ",e.CollisionBox.Y)
-      fmt.Println("enemy x: ",g.Player.CollisionBox.X,"; y: ",g.Player.CollisionBox.Y)
 		if rl.CheckCollisionRecs(e.CollisionBox, g.Player.CollisionBox) {
 			g.Player.Pos = g.Player.LastPos
+			e.Pos = e.LastPos
 		}
 	}
 }
 
+func (g *Game) UpdateCollisionBoxes() {
+	g.Player.UpdateCollisionBox()
+  g.Em.UpdateCollisionBoxes()
+}
+
 func (g *Game) DrawWithCamera() {
+	g.DrawActiveTileset()
 	g.Player.Draw()
 	g.Em.DrawEnemies()
-	g.DrawActiveTileset()
 }
 
 func (g *Game) DrawWithoutCamera() {
 	rl.DrawText(fmt.Sprintf("Player pos:\n(%d, %d)", int(g.Player.Pos.X), int(g.Player.Pos.Y)), 5, 25, 16, rl.Blue)
+	rl.DrawText(fmt.Sprintf("Fox pos:\n(%d, %d)", int(g.Em.Enemies[0].Pos.X), int(g.Em.Enemies[0].Pos.Y)), 5, 45, 16, rl.DarkBlue)
 	rl.DrawFPS(5, 5)
 }
 
 func (g *Game) DrawActiveTileset() {
+	//Draw Tileset
+	g.DrawTilemap(g.CurrentLevelName)
+
+}
+
+func (g *Game) DrawTilemapImage(levelName string) {
+
 }
 
 func (g *Game) DrawTilemap(levelName string) {
 	tm := g.Maps[levelName]
-	for _, layer := range tm.Map.Layers {
+  for _, layer := range tm.Map.Layers {
+    
 		for y := 0; y < int(tm.Map.Height); y++ {
 			for x := 0; x < int(tm.Map.Width); x++ {
 				tileID := layer.Tiles[x+y*int(tm.Map.Width)].ID
@@ -94,5 +107,10 @@ func (g *Game) Unload() {
 	}
 	for _, tex := range g.Player.Textures {
 		rl.UnloadTexture(tex)
+	}
+	for _, tex := range g.Em.Enemies {
+    for _, t := range tex.Textures {
+      rl.UnloadTexture(t)
+    }
 	}
 }

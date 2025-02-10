@@ -20,10 +20,8 @@ func main() {
 		//Camera Follows
 		rl.BeginMode2D(*g.Camera.Camera2D)
 
-		//Draw Tileset
-		g.DrawTilemap(g.CurrentLevelName)
-
 		g.DrawWithCamera()
+    DebugDrawCollisionBoxes(&g)
 		rl.EndMode2D()
 
 		//Draw Fixed UI -- Doesn't move with camera
@@ -32,4 +30,13 @@ func main() {
 		rl.EndDrawing()
 	}
 	g.Unload()
+}
+
+func DebugDrawCollisionBoxes(g *game.Game) {
+  for _, e := range g.Em.Enemies {
+    rl.DrawRectangleLines(int32(e.CollisionBox.X), int32(e.CollisionBox.Y), int32(e.CollisionBox.Width), int32(e.CollisionBox.Height), rl.Red)
+  }
+    rl.DrawRectangleLines(int32(g.Player.CollisionBox.X), int32(g.Player.CollisionBox.Y), int32(g.Player.CollisionBox.Width), int32(g.Player.CollisionBox.Height), rl.Blue)
+  
+
 }

@@ -12,7 +12,6 @@ import (
 
 type Map struct {
 	Map *tiled.Map
-	// Renderer *render.Renderer
 	Texture rl.Texture2D
 }
 
@@ -43,12 +42,7 @@ func addToMaps(maps map[string]Map, filepath string) error {
 	}
 	tsTexture := rl.LoadTexture(gameMap.Tilesets[0].Image.Source)
 
-	// renderer, err := render.NewRenderer(gameMap)
-	// if err != nil {
-	// 	return err
-	// }
 	m := Map{
-		// Renderer: renderer,
 		Map:     gameMap,
 		Texture: tsTexture,
 	}

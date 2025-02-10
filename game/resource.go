@@ -10,10 +10,13 @@ type ResourceManager struct {
 	Textures map[string]rl.Texture2D
 }
 
-func InitResourceManager() ResourceManager {
+func InitResourceManager(g *Game) ResourceManager {
 	rm := ResourceManager{
 		Textures: map[string]rl.Texture2D{},
 	}
+  g.Rm = rm
+  g.LoadTexture("resources/textures/fox-front.png", "fox")
+
 	return rm
 }
 
@@ -22,7 +25,9 @@ func (g *Game) LoadTexture(filepath, name string) error {
 	if img == nil {
 		return fmt.Errorf("error loading image [%s]:", filepath)
 	}
+  rl.ImageResize(img, 64, 64)
 	texture := rl.LoadTextureFromImage(img)
+  rl.UnloadImage(img)
 	err := g.Rm.AddTexture(texture, name)
 	if err != nil {
 		return err

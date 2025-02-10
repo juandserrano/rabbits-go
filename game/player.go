@@ -20,7 +20,7 @@ func InitPlayer() *Player {
 		Pos:   rl.Vector2{X: PLAYER_START_POS_X, Y: PLAYER_START_POS_Y},
 		Speed: PLAYER_START_SPEED,
 	}
-	p.CollisionBox = rl.Rectangle{X: p.Pos.X, Y: p.Pos.Y, Width: 64, Height: 64}
+	p.CollisionBox = rl.Rectangle{X: p.Pos.X + PLAYER_CB_OFFSET_X, Y: p.Pos.Y, Width: 40, Height: 64}
 	p.LoadTextures()
 	return &p
 }
@@ -79,4 +79,9 @@ func (p *Player) LoadTextures() {
 
 func (p *Player) Draw() {
 	rl.DrawTexture(p.Textures["current"], int32(p.Pos.X), int32(p.Pos.Y), rl.White)
+}
+
+func (p *Player) UpdateCollisionBox() {
+  p.CollisionBox.X = p.Pos.X + PLAYER_CB_OFFSET_X
+  p.CollisionBox.Y = p.Pos.Y
 }
